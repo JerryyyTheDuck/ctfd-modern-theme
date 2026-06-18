@@ -10,8 +10,11 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+AGENTS.md
 
 .vscode/
+.agents/
+.codex/
 !.vscode/extensions.json
 .idea/
 *.suo
@@ -19,6 +22,7 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+graphify-out/
 
 static/assets/
 static/webfonts/

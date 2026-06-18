@@ -1,12 +1,5 @@
 {% extends "base.html" %}
 
-{% block stylesheets %}
-  {{ super() }}
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-{% endblock %}
-
 {% block content %}
 
 <div id="team-edit-modal" class="modal fade">
@@ -198,10 +191,10 @@
 
 <div class="profile-page team-profile">
   
-  <div class="profile-header">
+  <div>
     <div class="container">
       <div class="profile-main">
-        <div class="profile-avatar team-avatar" x-data="ImageFallbackState()">
+        <div class="profile-avatar team-avatar" x-data="{ hasError: false }">
           <img 
             src="https://api.dicebear.com/9.x/identicon/svg?seed={{ (team.captain.email) | urlencode }}&size=200"
             alt="{{ team.name }}"
@@ -213,6 +206,7 @@
         </div>
         
         <div class="profile-info">
+          <div class="profile-kicker">Team Workspace</div>
           <div class="profile-name-row">
             <h1 id="team-id" team-id="{{ team.id }}">{{ team.name }}</h1>
             {% if team.oauth_id %}
@@ -226,6 +220,10 @@
               {% trans %}Your Team{% endtrans %}
             </span>
           </div>
+
+          <p class="profile-description">
+            Manage your roster, invites, captain controls, and team progress from one place.
+          </p>
           
           <div class="profile-badges">
             {% if team.affiliation %}
@@ -249,12 +247,32 @@
               </a>
             {% endif %}
           </div>
-          
-          {% for field in team.fields %}
-            <div class="profile-field">
-              <strong>{{ field.name }}:</strong> {{ field.value }}
+
+          <div class="profile-overview-grid">
+            <div class="profile-overview-card">
+              <span class="profile-overview-label">Members</span>
+              <span class="profile-overview-value">{{ team.members|length }} active</span>
             </div>
-          {% endfor %}
+            <div class="profile-overview-card">
+              <span class="profile-overview-label">Captain</span>
+              <span class="profile-overview-value">{{ team.captain.name if team.captain else "Assigned" }}</span>
+            </div>
+            <div class="profile-overview-card">
+              <span class="profile-overview-label">Access</span>
+              <span class="profile-overview-value">Management tools</span>
+            </div>
+          </div>
+
+          {% if team.fields %}
+            <div class="profile-field-grid">
+              {% for field in team.fields %}
+                <div class="profile-field-card">
+                  <span class="profile-field-label">{{ field.name }}</span>
+                  <span class="profile-field-value">{{ field.value }}</span>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
           
           
           <div class="captain-actions" x-data="CaptainMenu">
@@ -316,7 +334,7 @@
       
       <div class="members-grid">
         {% for member in team.members %}
-          <a href="{{ url_for('users.public', user_id=member.id) }}" class="member-card" x-data="ImageFallbackState()">
+          <a href="{{ url_for('users.public', user_id=member.id) }}" class="member-card" x-data="{ hasError: false }">
             <div class="member-avatar">
               <img 
                 src="https://api.dicebear.com/9.x/identicon/svg?seed={{ (member.email) | urlencode }}&size=88"
@@ -358,7 +376,7 @@
             {% for award in awards %}
               <div class="award-card">
                 <div class="award-icon-wrapper">
-                  <i class="award-icon award-{{ award.icon }}"></i>
+                  <i class="award-icon fas fa-award" aria-hidden="true"></i>
                 </div>
                 <div class="award-info">
                   <div class="award-name">{{ award.name }}</div>
@@ -491,17 +509,19 @@
   </div>
 </div>
 
-<template id="team-private-config">{{ {
-  'stats_data': {
-    'type': 'team',
-    'id': team.id,
-    'name': team.name,
-    'account_id': 'me'
-  },
-  'team_captain': (user.id == team.captain_id)
-} | tojson }}</template>
 {% endblock %}
 
 {% block scripts %}
+  <script>
+    window.stats_data = {{ {
+      'type': 'team',
+      'id': team.id,
+      'name': team.name,
+      'account_id': 'me',
+    } | tojson }};
+
+    window.team_captain = {{ (user.id == team.captain_id) | tojson }};
+  </script>
+
   {{ Assets.js("assets/js/teams/private.js") }}
 {% endblock %}

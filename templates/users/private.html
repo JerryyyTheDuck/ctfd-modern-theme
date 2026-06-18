@@ -1,19 +1,12 @@
 {% extends "base.html" %}
 
-{% block stylesheets %}
-  {{ super() }}
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-{% endblock %}
-
 {% block content %}
 <div class="profile-page">
   
-  <div class="profile-header">
+  <div>
     <div class="container">
       <div class="profile-main">
-        <div class="profile-avatar" x-data="ImageFallbackState()">
+        <div class="profile-avatar" x-data="{ hasError: false }">
           <img 
             src="https://api.dicebear.com/9.x/identicon/svg?seed={{ (user.email) | urlencode }}&size=200"
             alt="{{ user.name }}"
@@ -25,6 +18,7 @@
         </div>
         
         <div class="profile-info">
+          <div class="profile-kicker">Personal Workspace</div>
           <div class="profile-name-row">
             <h1>{{ user.name }}</h1>
             {% if user.oauth_id %}
@@ -38,6 +32,10 @@
               {% trans %}Your Profile{% endtrans %}
             </span>
           </div>
+
+          <p class="profile-description">
+            Your private competition profile, progress history, and editable identity details.
+          </p>
           
           {% if user.team_id %}
             <a href="{{ url_for('teams.public', team_id=user.team_id) }}" class="team-badge">
@@ -68,12 +66,32 @@
               </a>
             {% endif %}
           </div>
-          
-          {% for field in user.fields %}
-            <div class="profile-field">
-              <strong>{{ field.name }}:</strong> {{ field.value }}
+
+          <div class="profile-overview-grid">
+            <div class="profile-overview-card">
+              <span class="profile-overview-label">Mode</span>
+              <span class="profile-overview-value">{{ "Team competitor" if user.team_id else "Solo competitor" }}</span>
             </div>
-          {% endfor %}
+            <div class="profile-overview-card">
+              <span class="profile-overview-label">Team</span>
+              <span class="profile-overview-value">{{ user.team.name if user.team_id else "Independent" }}</span>
+            </div>
+            <div class="profile-overview-card">
+              <span class="profile-overview-label">Access</span>
+              <span class="profile-overview-value">Editable profile</span>
+            </div>
+          </div>
+
+          {% if user.fields %}
+            <div class="profile-field-grid">
+              {% for field in user.fields %}
+                <div class="profile-field-card">
+                  <span class="profile-field-label">{{ field.name }}</span>
+                  <span class="profile-field-value">{{ field.value }}</span>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
         
         
@@ -126,7 +144,7 @@
             {% for award in awards %}
               <div class="award-card">
                 <div class="award-icon-wrapper">
-                  <i class="award-icon award-{{ award.icon }}"></i>
+                  <i class="award-icon fas fa-award" aria-hidden="true"></i>
                 </div>
                 <div class="award-info">
                   <div class="award-name">{{ award.name }}</div>

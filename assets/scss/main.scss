@@ -31,6 +31,8 @@
   --wmctf-accent: #ff3b30;
   --wmctf-success: #34c759;
   --wmctf-warning: #ff9500;
+  --wmctf-square-dot-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Crect x='1' y='1' width='2' height='2' fill='%23ffffff' fill-opacity='0.11'/%3E%3C/svg%3E");
+  --wmctf-square-dot-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Crect x='1' y='1' width='2' height='2' fill='%230f172a' fill-opacity='0.10'/%3E%3C/svg%3E");
 
   --dark-bg: #000000;
   --dark-surface: #101010;
@@ -63,11 +65,37 @@
   --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.2);
 }
 
+html.theme-preload *,
+html.theme-preload *::before,
+html.theme-preload *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
 body {
+  position: relative;
+  isolation: isolate;
   padding-top: 70px;
+  background: var(--dark-bg);
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.92;
+  background:
+    radial-gradient(circle at top left, rgba(32, 201, 151, 0.12), transparent 30%),
+    radial-gradient(circle at top right, rgba(32, 201, 151, 0.08), transparent 26%),
+    linear-gradient(180deg, rgba(9, 12, 15, 0.96), rgba(3, 5, 7, 0.98)),
+    var(--wmctf-square-dot-dark);
+  background-size: auto, auto, auto, 28px 28px;
+  background-position: 0 0, 100% 0, 0 0, 0 0;
 }
 
 h1,
@@ -146,6 +174,7 @@ blockquote {
 }
 
 @import "includes/components/scoreboard";
+@import "template_runtime_styles";
 
 .glass-effect {
   backdrop-filter: blur(20px);
@@ -712,6 +741,17 @@ blockquote {
     color: var(--light-text);
   }
 
+  body::before {
+    opacity: 1;
+    background:
+      radial-gradient(circle at top left, rgba(32, 201, 151, 0.07), transparent 28%),
+      radial-gradient(circle at top right, rgba(15, 23, 42, 0.03), transparent 24%),
+      linear-gradient(180deg, rgba(252, 254, 255, 0.98), rgba(244, 247, 249, 0.98)),
+      var(--wmctf-square-dot-light);
+    background-size: auto, auto, auto, 28px 28px;
+    background-position: 0 0, 100% 0, 0 0, 0 0;
+  }
+
   a {
     color: #18a07a;
   }
@@ -796,9 +836,9 @@ blockquote {
 
   
   .jumbotron {
-    background: var(--light-surface);
+    background: transparent;
     color: var(--light-text);
-    border-color: var(--light-border);
+    border-color: transparent;
   }
 
   
@@ -1308,10 +1348,6 @@ blockquote {
 
   
 
-  .profile-header {
-    background: linear-gradient(135deg, rgba(32, 201, 151, 0.04) 0%, rgba(32, 201, 151, 0.01) 100%) !important;
-    border-bottom-color: var(--light-border) !important;
-  }
 
   .profile-name-row h1 {
     color: #1a1a2e !important;
@@ -1423,7 +1459,7 @@ blockquote {
   }
 
   
-  .profile-page.team-profile .profile-header {
+  .profile-page.team-profile{
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.04) 0%, rgba(99, 102, 241, 0.01) 100%) !important;
     border-bottom-color: var(--light-border) !important;
   }

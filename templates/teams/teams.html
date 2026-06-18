@@ -1,12 +1,5 @@
 {% extends "base.html" %}
 
-{% block stylesheets %}
-  {{ super() }}
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-{% endblock %}
-
 {% block content %}
 <div class="teams-page">
   
@@ -60,7 +53,7 @@
     
     <div class="teams-grid">
       {% for team in teams.items %}
-        <div class="team-card" x-data="ImageFallbackState()">
+        <div class="team-card" x-data="{ hasError: false }">
           <div class="team-avatar">
             <img 
               src="https://api.dicebear.com/9.x/identicon/svg?seed={{ (team.captain.email) | urlencode }}&size=100"
@@ -104,6 +97,11 @@
                 </span>
               {% endif %}
             </div>
+
+            <div class="card-footnote">
+              <span class="card-pill">Registered team</span>
+              <span class="card-caption">Public roster</span>
+            </div>
           </div>
           
           <div class="team-actions">
@@ -125,9 +123,12 @@
     
     {% if not teams.items %}
       <div class="empty-state">
-        <i class="fas fa-users-slash"></i>
+        <div class="empty-icon">
+          <i class="fas fa-users-slash"></i>
+        </div>
         <h3>{% trans %}No teams found{% endtrans %}</h3>
         <p>{% trans %}Try adjusting your search criteria{% endtrans %}</p>
+        <div class="empty-state-inline-tip">{% trans %}Try searching by team name first for the cleanest results.{% endtrans %}</div>
       </div>
     {% endif %}
 

@@ -1,6 +1,4 @@
 import CTFd from "../index";
-import "../template_runtime/user-public-context";
-import { registerCommonAlpineStates } from "../components/alpine-states";
 
 import Alpine from "alpinejs";
 import { colorHash } from "@ctfdio/ctfd-js/ui";
@@ -8,7 +6,6 @@ import { getOption as getUserScoreOption } from "../utils/graphs/echarts/usersco
 import { embed } from "../utils/graphs/echarts";
 
 window.Alpine = Alpine;
-registerCommonAlpineStates(Alpine);
 
 Alpine.data("UserGraphs", () => ({
   solves: null,
